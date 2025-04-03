@@ -1,0 +1,24 @@
+// CameraRGBA32.compute
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+StructuredBuffer<uint> Input;
+int Width;
+int Height;
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint x = id.x;
+    uint y = id.y;
+    if (x >= Width || y >= Height) return;
+
+    uint index = y * Width + x;
+    uint rgba = Input[index];
+
+    float r = ((rgba >>  0) & 0xFF) / 255.0;
+    float g = ((rgba >>  8) & 0xFF) / 255.0;
+    float b = ((rgba >> 16) & 0xFF) / 255.0;
+
+    Result[int2(x, y)] = float4(r, g, b, 1.0);
+}
