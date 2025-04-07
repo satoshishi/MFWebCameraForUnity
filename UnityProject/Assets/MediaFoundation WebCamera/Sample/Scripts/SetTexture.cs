@@ -9,8 +9,10 @@ public class SetTexture : MonoBehaviour
 
     public RawImage image;
 
-    public void Handle()
+    public async void Start()
     {
-        image.texture = webcamera.Texture;
+        RenderTexture texture = await webcamera.GetTextureAsync();
+        image.texture = texture;
+        image.SetNativeSize();
     }
 }

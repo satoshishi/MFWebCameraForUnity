@@ -51,16 +51,40 @@ namespace MF
 
         private readonly object frameLock = new();
 
+        /// <summary>
+        /// テクスチャが生成するまでにラグがあるので、生成完了までawaitする
+        /// </summary>
+        /// <returns></returns>
+        public async Task<RenderTexture> GetTextureAsync()
+        {
+#if UNITY_STANDALONE_WIN
+            while (Texture == null)
+            {
+                await Task.Delay(1);
+            }
+
+            return Texture;
+#else
+            throw new NotSupportedException("This platform is not supported. Only Windows standalone is supported.");
+#endif
+        }
+
         private void Start()
         {
+#if UNITY_STANDALONE_WIN
             InitCamera();
             InitBuffers(width, height);
             StartFrameLoop();
+#else
+            throw new NotSupportedException("This platform is not supported. Only Windows standalone is supported.");
+#endif
         }
 
         private void Update()
         {
+#if UNITY_STANDALONE_WIN
             Rendering();
+#endif
         }
 
         /// <summary>
